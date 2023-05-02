@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  position: relative;
+  min-height: 100vh;
+}
+
+h3 {
+  font-size: 22px;
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+/* main body */
+.menu-color {
+  color: white;
+}
+
+.nav-item {
+  border-right: 2px solid #ffffff;
+}
+.nav-item:hover .menu-hover {
+  /* font-size: 20px; */
+  background-color: #0c5734;
+  /* color: black; */
+  border-radius: 5px;
+}
+
+.last-menu {
+  font-size: 10px;
+}
+.signout {
+  font-size: 10px;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-group a {
+  text-transform: capitalize;
+}
+.list-group a:hover {
+  color: #146c43;
+}
+
+.user-div .inner-content p {
+  font-size: 18px;
+  font-weight: 500;
+}
+.user-div .inner-content a {
+  color: #146c43;
+  text-decoration: none;
+}
+.user-div .inner-content a:hover {
+  color: dodgerblue;
+  text-decoration: underline;
+}
+
+.news a {
+  color: black;
+}
+
+.news a:hover {
+  color: dodgerblue;
+  text-decoration: none;
+}
+
+/* footer */
+.footer {
+  background-color: #146c43;
+}
+.footer strong {
+  font-size: 20px;
+  color: #ffffff;
+}
+.footer-menu:hover {
+  color: darkgreen;
+}
