@@ -6,6 +6,7 @@
 <style>
     .c_active{ color: #ffffff; background-color: #198754; }
     .c_text{font-size: 12px!important; text-decoration: none!important; }
+    .not-allow{ cursor:not-allowed; }
 </style>
 @endpush
 
@@ -125,7 +126,7 @@
                                             <div class="mb-3 row">
                                                 <label for="btc" class="col-sm-3 col-form-label">BTC</label>
                                                 <div class="col-sm-8">
-                                                  <input type="text" class="form-control" id="btc" name="balance_btc" value="@if(!empty($btc)) {{ number_format($btc,7) }}  @else 0.0000000 @endif" readonly>
+                                                  <input type="text" class="form-control not-allow" id="btc" name="balance_btc" value="@if(!empty($btc)) {{ number_format($btc,7) }}  @else 0.0000000 @endif" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -134,7 +135,7 @@
                                             <div class="mb-3 row">
                                                 <label for="xmr" class="col-sm-3 col-form-label">XMR</label>
                                                 <div class="col-sm-9">
-                                                  <input type="text" class="form-control" id="xmr" name="balance_xmr" value="@if(!empty($xmr)) {{ number_format($xmr,7) }}  @else 0.0000000 @endif" readonly>
+                                                  <input type="text" class="form-control not-allow" id="xmr" name="balance_xmr" value="@if(!empty($xmr)) {{ number_format($xmr,7) }}  @else 0.0000000 @endif" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -143,7 +144,7 @@
                                             <div class="mb-3 row">
                                                 <label for="dogo" class="col-sm-4 col-form-label">DOGO</label>
                                                 <div class="col-sm-8">
-                                                  <input type="text" class="form-control" id="dogo" name="balance_dogo" value="@if(!empty($dogo)) {{ number_format($dogo,7) }}  @else 0.0000000 @endif" readonly>
+                                                  <input type="text" class="form-control not-allow" id="dogo" name="balance_dogo" value="@if(!empty($dogo)) {{ number_format($dogo,7) }}  @else 0.0000000 @endif" readonly>
                                                 </div>
                                             </div>
                                         </div>

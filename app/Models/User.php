@@ -30,6 +30,7 @@ class User extends Authenticatable
         'vendor_since',
         'title',
         'about',
+        'banned_until',
         'deleted_at'
     ];
 

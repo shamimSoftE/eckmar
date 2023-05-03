@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\CancelOrders::class,
+        \App\Console\Commands\RemoveUserBans::class,
     ];
     /**
      * Define the application's command schedule.
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('orders:cancel')->hourly();
+        $schedule->command('user:bans:remove')->daily();
     }
 
     /**
