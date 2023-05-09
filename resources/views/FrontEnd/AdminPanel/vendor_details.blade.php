@@ -3,10 +3,20 @@
 @section('title', 'User Details')
 
 @push('style')
+
 <style>
     .c_active{ color: #ffffff; background-color: #198754; }
     .c_text{font-size: 12px!important; text-decoration: none!important; }
     .not-allow{ cursor:not-allowed; }
+    .d-grid{ display: grid; justify-content: space-evenly;}
+    .circle {
+        height: 35px;
+        width: 35px;
+        border: 1px solid #bbb;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .cfs-12{  font-size: 12px; }
 </style>
 @endpush
 
@@ -41,9 +51,7 @@
                 <div class="mb-4 inner-content">
                     <div class="row">
                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-
-                            <h3 class="pb-3 border-bottom text-start">User details for buyer</h3>
-
+                            <h3 class="pb-3 border-bottom text-start">User details for vendor</h3>
                             <div class="card">
                                 <div class="card-header">Basic Infomation</div>
                                 <div class="card-body">
@@ -94,10 +102,6 @@
                                                     <input class="form-check-input" type="checkbox" name="user_type_dispute" @if($user->type == 2 || $user->support_panel == 1) checked @endif value="2"  id="dispute">
                                                     <label class="form-check-label text-muted" for="dispute">Support Panel</label>
                                                 </div>
-                                                {{-- <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="ticket">
-                                                    <label class="form-check-label" for="ticket">Ticket</label>
-                                                </div> --}}
                                                 <small class="text-wrap" style="font-size: 12px; width: 6rem">Limited access to Admin Panel. Mainly resolves disputes </small>
                                             </div>
                                         </div>
@@ -113,6 +117,128 @@
                         </div>
 
 
+                        <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 mt-3">
+                            <form action="{{ route('user_permission') }}" method="POST">
+                                @csrf
+                                <div class="card">
+                                    <div class="card-header">Vendor Status</div>
+                                    <div class="card-body">
+
+                                        <div class="row p-3">
+
+
+
+                                            <div class="col-lg-4 col-md-4 text-start">
+                                                {{-- <span class="border p-1">lavel 1</span> <span class="text-muted">(0 XP)</span> --}}
+                                                <h6 class="">Feedback Ratings</h6>
+                                                <strong class="float-start ">Quality : </strong>
+                                                @if(!empty($product_reviews->avg('quality_review')))
+                                                    @switch(number_format($product_reviews->avg('quality_review')))
+                                                        @case(5)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆ ☆ ☆ ☆ </span>'; !!}
+                                                            @break
+                                                        @case(4)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆ ☆ ☆ </span> <span style="font-size: 19px;"> ☆ </span>'; !!}
+                                                            @break
+                                                        @case(3)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆ ☆ </span> <span style="font-size: 19px;"> ☆ ☆ </span>'; !!}
+                                                            @break
+                                                        @case(2)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆  </span> <span style="font-size: 19px;"> ☆ ☆ ☆</span>'; !!}
+                                                            @break
+                                                        @case(1)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆   </span> <span style="font-size: 19px;"> ☆ ☆ ☆ ☆</span>'; !!}
+                                                            @break
+                                                        @default
+                                                        <span style="font-size: 19px;"> ☆ ☆ ☆ ☆ ☆ </span>
+                                                    @endswitch
+                                                @else
+                                                    <span style="font-size: 19px;"> ☆ ☆ ☆ ☆ ☆ </span>
+                                                @endif
+                                                <br>
+                                                <strong class="float-start ">Shipping : </strong>
+                                                @if(!empty($product_reviews->avg('shipping_review')))
+                                                    @switch(number_format($product_reviews->avg('shipping_review')))
+                                                        @case(5)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆ ☆ ☆ ☆ </span>'; !!}
+                                                            @break
+                                                        @case(4)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆ ☆ ☆ </span> <span style="font-size: 19px;"> ☆ </span>'; !!}
+                                                            @break
+                                                        @case(3)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆ ☆ </span> <span style="font-size: 19px;"> ☆ ☆ </span>'; !!}
+                                                            @break
+                                                        @case(2)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆ ☆  </span> <span style="font-size: 19px;"> ☆ ☆ ☆</span>'; !!}
+                                                            @break
+                                                        @case(1)
+                                                            {!! '<span style="font-size: 19px;color:#f58020;"> ☆   </span> <span style="font-size: 19px;"> ☆ ☆ ☆ ☆</span>'; !!}
+                                                            @break
+                                                        @default
+                                                        <span style="font-size: 19px;"> ☆ ☆ ☆ ☆ ☆ </span>
+                                                    @endswitch
+                                                    @else
+                                                    <span style="font-size: 19px;"> ☆ ☆ ☆ ☆ ☆ </span>
+                                                @endif
+                                            </div>
+
+                                            <div class="col-lg-5 col-md-5 text-start">
+                                                <div class="row">
+                                                    <div class="col-lg-4 col-md-4">
+                                                        <div class="row">
+                                                            <div class="col-auto"><span class="circle" style=" background: #198754;"></span> </div>
+                                                            <div class="col-auto"><strong class="fs-3 text-center">@if(isset($order_feedback->review_positive)) {{ $order_feedback->review_positive }} @else {{ 0 }} @endif</strong></div>
+                                                        </div>
+                                                        <strong class="text-center">Positive</strong>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4">
+                                                        <div class="row">
+                                                            <div class="col-auto"><span class="circle" style="background: #f58020;"></span> </div>
+                                                            <div class="col-auto"><strong class="fs-3 text-center">@if(isset($order_feedback->review_neutral)) {{ $order_feedback->review_neutral }} @else {{ 0 }} @endif</strong></div>
+                                                        </div>
+                                                        <strong class="text-center">Neutral</strong>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4">
+                                                        <div class="row">
+                                                            <div class="col-auto"><span class="circle" style=" background:#d71616ed;"></span> </div>
+                                                            <div class="col-auto"><strong class="fs-3 text-center">@if(isset($order_feedback->review_negative)) {{ $order_feedback->review_negative }} @else {{ 0 }} @endif</strong></div>
+                                                        </div>
+                                                        <strong class="text-center">Negative</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 d-grid" >
+                                                <span class="fs-3 text-center">0</span>
+                                                <strong>Total Product</strong>
+                                            </div>
+
+                                            <div class="col-lg-12 col-md-12">
+                                                <center><strong>Total Earned ${{ number_format($wallet->balance,2) }}</strong></center> <br>
+
+                                                <div class="pb-3 bg-white">
+                                                    <span class="cfs-12 text-muted" style="letter-spacing: 1px; word-spacing: 5px; display: flex; justify-content: space-around;">
+                                                        Member Since {{ date('d M Y', strtotime( $user->created_at)) }} |
+                                                        Vendor Since {{ date('d M Y', strtotime( $user->vendor_since)) }} |
+                                                        {{-- Disputes is last 12 months (Won 0/Losted 0)  (0) | --}}
+                                                        Completed Orders: @if(isset($order_complete)) {{ count($order_complete) }} @else {{ 0 }} @endif |
+                                                        Rate Orders: @if(isset($order_review)) {{ count($order_review) }} @else {{ 0 }} @endif
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                    </div>
+                                    <div class="card-footer">
+                                        <center><a href="" class="btn btn-sm btn-success text-white">View User Products </a></center>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+
+
+
+
 
                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 mt-3">
                             <form action="{{ route('user_wallet_modify') }}" method="POST">
@@ -124,9 +250,13 @@
 
                                             <div class="col-xl-12 mb-3">
                                                 <div style=" display: flex; justify-content: space-evenly; ">
+                                                    <span> Tax %:
+                                                        <input type="text" name="tax_rate" style=" border-radius: 5px; border-color: #1881504f; width: 59%; padding: 3px; "
+                                                         value="@if(!empty($wallet->tax)) {{ $wallet->tax }}  @else 0 @endif">
+                                                    </span>
                                                     <span> DOLLAR($) :
                                                         <input type="text" name="balance_dollar" style=" border-radius: 5px; border-color: #1881504f; width: 59%; padding: 3px; "
-                                                         value="@if(!empty($wallet->balance)) {{ number_format($wallet->balance,7) }}  @else 0.0000000 @endif">
+                                                         value="@if(!empty($wallet->balance)) {{ number_format($wallet->balance,2) }}  @else 0.00 @endif">
                                                     </span>
                                                 </div>
                                             </div>

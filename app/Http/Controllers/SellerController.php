@@ -28,7 +28,7 @@ class SellerController extends Controller
             // update user as vendor
             $user->update([
                 'type' => 1,
-                'vendor_since' => date('Y-m-d')
+                'vendor_since' => date('Y-m-d H:m:s')
             ]);
         }else{
             return redirect()->back()->with('error', "You don't have enought balance. Please try again later");

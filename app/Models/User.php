@@ -31,6 +31,7 @@ class User extends Authenticatable
         'title',
         'about',
         'banned_until',
+        'support_panel',
         'deleted_at'
     ];
 

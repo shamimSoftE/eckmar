@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bans', function (Blueprint $table) {
+        Schema::create('ban_users', function (Blueprint $table) {
             $table->id();
-            $table->date('start')->nullable();
-            $table->date('end')->nullable();
             $table->unsignedBigInteger('user_id');
+            $table->timestamp('end_date');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bans');
+        Schema::dropIfExists('ban_users');
     }
 };

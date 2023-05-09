@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ban;
+use App\Models\BanUser;
 use App\Models\Magician;
+use App\Models\OrderFeedback;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
@@ -93,11 +95,68 @@ class UserController extends Controller
     public function userDetail($id)
     {
         $user = User::find(Magician::ed($id, false));
-        $bans = Ban::where('user_id', $user->id)->latest()->get();
+        $bans = BanUser::where('user_id', $user->id)->latest()->get();
+
         if ($user->type == 1) {
-            return view('FrontEnd.AdminPanel.vendor_details', compact('user', 'bans'));
+            $order_feedback = OrderFeedback::where('seller_id', $user->id)->latest()->first(['review_positive','review_neutral','review_negative']);
+            $product_reviews = OrderFeedback::where('seller_id', $user->id)->get(['feedback_message','customer_id','seller_id','quality_review','shipping_review']);
+            return view('FrontEnd.AdminPanel.vendor_details', compact('user', 'bans','order_feedback','product_reviews'));
         }else{
             return view('FrontEnd.AdminPanel.user_details', compact('user','bans'));
         }
+    }
+
+    public function userPermission(Request $request)
+    {
+        $user = User::findOrFail($request->user_id);
+
+        if ($request->user_type_dispute == 2) {
+            $type = 2;
+            $panel_support = 1;
+        }else{
+            $type = $user->type;
+            $panel_support = 0;
+        }
+
+        if ($request->user_type_vendor == 1) {
+            $type = 1;
+        }else{
+            $type = $user->type;
+        }
+
+        if ($request->user_type_vendor == 1 &&  $type == 2) {
+            $user->update([
+                'type' => 1,
+                'vendor_since' => 1,
+                'support_panel' => date('Y-m-d H:m:s')
+            ]);
+        }else {
+            $user->update([
+                'type' => 1,
+                'support_panel' => 0,
+            ]);
+        }
+
+        return redirect()->back()->with("success", 'User panel permission saved');
+    }
+
+    public function userWalletModify(Request $request)
+    {
+        $user = User::findOrFail($request->user_id);
+
+        $user_wallet = Wallet::where('user_id', $user->id)->first();
+        $user_wallet->update(['balance' => $request->balance_dollar]);
+        return redirect()->back()->with("success", 'User wallet updated');
+    }
+
+    public function userBanned(Request $request)
+    {
+        $user = User::findOrFail($request->user_id);
+        BanUser::create([
+            'user_id' => $user->id,
+            'end_date' => now()->addDays($request->ban_for),
+        ]);
+        $user->update(['banned_until' => now()->addDays($request->ban_for)]);
+        return redirect()->back()->with("success", 'User banned for ' .$request->ban_for.' days.');
     }
 }

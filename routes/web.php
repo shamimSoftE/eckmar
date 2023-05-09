@@ -178,6 +178,15 @@ Route::middleware('auth')->group(function () {
         Route::post('user_filter', [UserController::class, 'userFilter']);
         Route::get('user_details/{id}', [UserController::class, 'userDetail']);
 
+        // user panel permission
+        Route::post('user_permission/', [UserController::class, 'userPermission'])->name('user_permission');
+
+        // user wallet modify
+        Route::post('user_wallet_modify/', [UserController::class, 'userWalletModify'])->name('user_wallet_modify');
+
+        // user banned
+        Route::post('user_banned/', [UserController::class, 'userBanned'])->name('user.banned');
+
         // admin product list
         Route::get('admin_product_list', [ProductController::class, 'adminProductLlst']);
         Route::post('admin_product_list', [ProductController::class, 'adminProductFilter'])->name('adminProFilter');
