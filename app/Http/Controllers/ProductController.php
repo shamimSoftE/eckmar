@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -20,8 +21,18 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('deleted_at', null)->paginate(7);
-        return view('FrontEnd.pages.seller.product_list',compact('products'));
+        $user = Auth::user();
+
+        $userBanUntill = Carbon::parse($user->banned_until);
+        $today = Carbon::now();
+        $dayDiff = $today->diffInDays($userBanUntill);
+
+        if ($dayDiff <= 1) {
+            $products = Product::where('deleted_at', null)->where('seller_id', $user->id)->paginate(7);
+            return view('FrontEnd.pages.seller.product_list',compact('products'));
+        }else {
+            return redirect()->back()->with('error', "Your Account Was Banned. So You Can't Access This Field Right Now. It Will Be Remove On ".date('d M Y', strtotime($user->banned_until)));
+        }
     }
 
     /**
@@ -31,8 +42,17 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $category = Category::where('deleted_at', null)->where('status',1)->get();
-        return view('FrontEnd.pages.seller.add_product',compact('category'));
+        $user = Auth::user();
+        $userBanUntill = Carbon::parse($user->banned_until);
+        $today = Carbon::now();
+        $dayDiff = $today->diffInDays($userBanUntill);
+
+        if ($dayDiff <= 1) {
+            $category = Category::where('deleted_at', null)->where('status',1)->get();
+            return view('FrontEnd.pages.seller.add_product',compact('category'));
+        }else {
+            return redirect()->back()->with('error', "Your Account Was Banned. So You Can't Access This Field Right Now. It Will Be Remove On ".date('d M Y', strtotime($user->banned_until)));
+        }
     }
 
     /**

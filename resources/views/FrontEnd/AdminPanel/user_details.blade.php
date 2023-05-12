@@ -205,31 +205,31 @@
 
                                 </div>
 
-                                @if($user->banned_until !=null)
-                                    @php
-                                        $userBanUntill = Carbon\Carbon::parse($user->banned_until);
-                                        $today = Carbon\Carbon::now();
-                                        $hoursDiff = $today->diffInDays($userBanUntill);
-                                    @endphp
 
-                                    @if($hoursDiff <= 1)
-                                        <div class="card-footer">
-                                            <form class="g-3" method="POST" action="{{ route('user.banned') }}">
-                                                @csrf
-                                                <div class="mb-3 row">
-                                                    <label for="user_ban" class="col-sm-6 col-form-label">Ban user for number of days from now</label>
-                                                    <div class="col-sm-4">
-                                                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                                    <input type="number" class="form-control" id="user_ban" placeholder="Days" name="ban_for" >
-                                                    </div>
-                                                    <div class="col-sm-2">
-                                                        <button type="submit" class="btn btn-outline-danger mb-3">Ban</button>
-                                                    </div>
+                                @php
+                                    $userBanUntill = Carbon\Carbon::parse($user->banned_until);
+                                    $today = Carbon\Carbon::now();
+                                    $hoursDiff = $today->diffInDays($userBanUntill);
+                                @endphp
+
+                                @if($hoursDiff <= 1)
+                                    <div class="card-footer">
+                                        <form class="g-3" method="POST" action="{{ route('user.banned') }}">
+                                            @csrf
+                                            <div class="mb-3 row">
+                                                <label for="user_ban" class="col-sm-6 col-form-label">Ban user for number of days from now</label>
+                                                <div class="col-sm-4">
+                                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                <input type="number" class="form-control" id="user_ban" placeholder="Days" name="ban_for" >
                                                 </div>
-                                            </form>
-                                        </div>
-                                    @endif
+                                                <div class="col-sm-2">
+                                                    <button type="submit" class="btn btn-outline-danger mb-3">Ban</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
                                 @endif
+
 
                             </div>
                         </div>

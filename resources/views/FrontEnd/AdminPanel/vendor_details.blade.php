@@ -51,7 +51,7 @@
                 <div class="mb-4 inner-content">
                     <div class="row">
                         <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12">
-                            <h3 class="pb-3 border-bottom text-start">User details for vendor</h3>
+                            <h3 class="pb-3 border-bottom text-start">Details for vendor</h3>
                             <div class="card">
                                 <div class="card-header">Basic Infomation</div>
                                 <div class="card-body">
@@ -229,7 +229,7 @@
                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                                     </div>
                                     <div class="card-footer">
-                                        <center><a href="" class="btn btn-sm btn-success text-white">View User Products </a></center>
+                                        <center><a href="{{ url('vendor-dashboard', App\Models\Magician::ed($user->id)) }}" target="_blank" class="btn btn-sm btn-success text-white">View Vendor Details</a></center>
                                     </div>
                                 </div>
                             </form>
@@ -263,9 +263,9 @@
 
                                             <input type="hidden" name="user_id" value="{{ $user->id }}">
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-3 col-lg-3 col-md-3">
                                                 <div class="mb-3 row">
-                                                    <label for="btc" class="col-sm-3 col-form-label">BTC</label>
+                                                    <label for="btc" class="col-sm-4 col-form-label">BTC</label>
                                                     <div class="col-sm-8">
                                                       <input type="text" class="form-control not-allow" id="btc" name="balance_btc" value="@if(!empty($btc)) {{ number_format($btc,7) }}  @else 0.0000000 @endif" readonly>
                                                     </div>
@@ -281,10 +281,10 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-5 col-lg-5 col-md-5">
                                                 <div class="mb-3 row">
-                                                    <label for="dogo" class="col-sm-4 col-form-label">DOGO</label>
-                                                    <div class="col-sm-8">
+                                                    <label for="dogo" class="col-sm-3 col-form-label">DOGO</label>
+                                                    <div class="col-sm-9">
                                                       <input type="text" class="form-control not-allow" id="dogo" name="balance_dogo" value="@if(!empty($dogo)) {{ number_format($dogo,7) }}  @else 0.0000000 @endif" readonly>
                                                     </div>
                                                 </div>
@@ -308,15 +308,15 @@
                                         <thead>
                                           <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Start</th>
-                                            <th scope="col">End</th>
+                                            <th scope="col">Start Date</th>
+                                            <th scope="col">End Date</th>
 
                                           </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($bans as $ban)
+                                            @forelse ($bans as $key=> $ban)
                                                 <tr>
-                                                    <th scope="row">1</th>
+                                                    <th scope="row">{{ ++$key }}</th>
                                                     <td>{{ date('Y/m/d', strtotime($ban->created_at)) }}</td>
                                                     <td>{{ date('Y/m/d', strtotime($ban->end_date)) }}</td>
                                                 </tr>
@@ -335,7 +335,7 @@
 
                                 </div>
 
-                                @if($user->banned_until !=null)
+
                                     @php
                                         $userBanUntill = Carbon\Carbon::parse($user->banned_until);
                                         $today = Carbon\Carbon::now();
@@ -359,7 +359,7 @@
                                             </form>
                                         </div>
                                     @endif
-                                @endif
+
 
                             </div>
                         </div>

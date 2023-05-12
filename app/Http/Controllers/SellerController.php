@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Withdraw;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class SellerController extends Controller
@@ -59,17 +60,25 @@ class SellerController extends Controller
     public function myOrder()
     {
         $user = Auth::user();
-        try {
-            $data['orders'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->latest()->paginate(5);
-            $data['order_process'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 0)->latest()->paginate(5);
-            $data['order_complete'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 1)->latest()->paginate(5);
-            $data['order_delivered'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 2)->latest()->paginate(5);
-            $data['order_disputes'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 3)->latest()->paginate(5);
-            $data['order_cancell'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 4)->latest()->paginate(5);
-        } catch (\Throwable $th) {
-           return redirect()->back();
+        $userBanUntill = Carbon::parse($user->banned_until);
+        $today = Carbon::now();
+        $dayDiff = $today->diffInDays($userBanUntill);
+
+        if ($dayDiff <= 1) {
+            try {
+                $data['orders'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->latest()->paginate(5);
+                $data['order_process'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 0)->latest()->paginate(5);
+                $data['order_complete'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 1)->latest()->paginate(5);
+                $data['order_delivered'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 2)->latest()->paginate(5);
+                $data['order_disputes'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 3)->latest()->paginate(5);
+                $data['order_cancell'] = Order::where('deleted_at', null)->where('seller_id',$user->id)->where('status', 4)->latest()->paginate(5);
+            } catch (\Throwable $th) {
+               return redirect()->back();
+            }
+            return view('FrontEnd.pages.seller.seller_order',compact('data','user'));
+        }else {
+            return redirect()->back()->with('error', "Your Account Was Banned. So Can't Access This Field Right Now. It Will Be Remove On ".date('d M Y', strtotime($user->banned_until)));
         }
-        return view('FrontEnd.pages.seller.seller_order',compact('data','user'));
     }
 
     public function orderStatus(Request $request)

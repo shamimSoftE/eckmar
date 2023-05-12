@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderFeedback;
 use App\Models\Product;
 use App\Models\Wallet;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +18,12 @@ class OrderController extends Controller
 {
     public function makeOrder(Request $request)
     {
+        $user = Auth::user();
+
+        $userBanUntill = Carbon::parse($user->banned_until);
+        $today = Carbon::now();
+        $dayDiff = $today->diffInDays($userBanUntill);
+
 
         $input = $request->all();
         $input['customer_id'] = Auth()->user()->id;
@@ -24,58 +31,65 @@ class OrderController extends Controller
 
         // find product
         try {
-            $product = Product::findOrFail($input['product_id']);
-            // $category = Category::findOrFail($product->category_id);
-
-
-            $product_price = $product->price*$input['product_qty'];
-            $input['seller_id'] = $product->seller_id;
-
-
-            $cus_wallet = Wallet::where('user_id',$input['customer_id'])->first(); // find customer account
-            $cus_balance = 0;  // customer balance
-            if(isset($cus_wallet))
+            if($dayDiff <= 1)
             {
-                $cus_balance = $cus_wallet->balance;
-            }
 
-            $ven_wallet = Wallet::where('user_id',$input['seller_id'])->first(); //find vendor account
-            $ven_balance = 0; // vendor balance
-            if(isset($ven_wallet))
-            {
-                $ven_balance = $ven_wallet->balance;
-            }
+                $product = Product::findOrFail($input['product_id']);
+                // $category = Category::findOrFail($product->category_id);
 
 
-            if($cus_balance >= $product_price)
-            {
-                $sell_price = $cus_balance - $product_price;
-                $ven_balance = $ven_balance + $product_price;
+                $product_price = $product->price*$input['product_qty'];
+                $input['seller_id'] = $product->seller_id;
 
-                $ven_wallet->update(['balance' => $ven_balance]); //update seller wallet
 
-                $cus_wallet->update(['balance' =>  $sell_price]); //update customer wallet
-                Order::create($input);
+                $cus_wallet = Wallet::where('user_id',$input['customer_id'])->first(); // find customer account
+                $cus_balance = 0;  // customer balance
+                if(isset($cus_wallet))
+                {
+                    $cus_balance = $cus_wallet->balance;
+                }
 
-                // update category order count
-                // $category_total_order =  $category->order_count + 1;
-                // $category->update(['order_count' => $category_total_order]);
+                $ven_wallet = Wallet::where('user_id',$input['seller_id'])->first(); //find vendor account
+                $ven_balance = 0; // vendor balance
+                if(isset($ven_wallet))
+                {
+                    $ven_balance = $ven_wallet->balance;
+                }
 
-                // decrease product qty
-                // if($product->qty >= $input['product_qty'])
-                // {
-                //     $product_qty = $product->qty - $input['product_qty'];
-                // }else{
-                //     $product_qty = $product->qty;
-                //     return redirect()->back()->with('error', 'The requested quantity is not available');
-                // }
-                // $product_total_order =  $product->order_count + 1;
-                // $product->update(['order_count' => $product_total_order, 'qty' => $product_qty]);
 
-                return redirect('order-view')->with('success', "Thanks For Your Order. We'll Contact You As Soon As Possible.");
+                if($cus_balance >= $product_price)
+                {
+                    $sell_price = $cus_balance - $product_price;
+                    $ven_balance = $ven_balance + $product_price;
+
+                    $ven_wallet->update(['balance' => $ven_balance]); //update seller wallet
+
+                    $cus_wallet->update(['balance' =>  $sell_price]); //update customer wallet
+                    Order::create($input);
+
+                    // update category order count
+                    // $category_total_order =  $category->order_count + 1;
+                    // $category->update(['order_count' => $category_total_order]);
+
+                    // decrease product qty
+                    // if($product->qty >= $input['product_qty'])
+                    // {
+                    //     $product_qty = $product->qty - $input['product_qty'];
+                    // }else{
+                    //     $product_qty = $product->qty;
+                    //     return redirect()->back()->with('error', 'The requested quantity is not available');
+                    // }
+                    // $product_total_order =  $product->order_count + 1;
+                    // $product->update(['order_count' => $product_total_order, 'qty' => $product_qty]);
+
+                    return redirect('order-view')->with('success', "Thanks For Your Order. We'll Contact You As Soon As Possible.");
+                }else{
+                    return redirect()->back()->with('error', "You Don't have enough balance.");
+                }
             }else{
-                return redirect()->back()->with('error', "You Don't have enough balance.");
+                return redirect()->back()->with('error',"Your Account Was Banned. So You Can't Access This Field Right Now. It Will Be Remove On ".date('d M Y', strtotime($user->banned_until)));
             }
+
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', "You Don't have enough balance. Found some things missing!");
         }

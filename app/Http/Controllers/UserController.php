@@ -112,10 +112,8 @@ class UserController extends Controller
 
         if ($request->user_type_dispute == 2) {
             $type = 2;
-            $panel_support = 1;
         }else{
             $type = $user->type;
-            $panel_support = 0;
         }
 
         if ($request->user_type_vendor == 1) {
@@ -127,8 +125,8 @@ class UserController extends Controller
         if ($request->user_type_vendor == 1 &&  $type == 2) {
             $user->update([
                 'type' => 1,
-                'vendor_since' => 1,
-                'support_panel' => date('Y-m-d H:m:s')
+                'vendor_since' => date('Y-m-d H:m:s'),
+                'support_panel' => 1
             ]);
         }else {
             $user->update([
@@ -144,8 +142,16 @@ class UserController extends Controller
     {
         $user = User::findOrFail($request->user_id);
 
-        $user_wallet = Wallet::where('user_id', $user->id)->first();
-        $user_wallet->update(['balance' => $request->balance_dollar]);
+        if ($user->type == 1) {
+            $user_wallet = Wallet::where('user_id', $user->id)->first();
+            $user_wallet->update([
+                'balance' => $request->balance_dollar,
+                'tax' => $request->tax_rate,
+             ]);
+        }else{
+            $user_wallet = Wallet::where('user_id', $user->id)->first();
+            $user_wallet->update(['balance' => $request->balance_dollar]);
+        }
         return redirect()->back()->with("success", 'User wallet updated');
     }
 

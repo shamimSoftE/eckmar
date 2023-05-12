@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Magician;
 use App\Models\Product;
 use App\Models\Wishlist;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,17 +40,27 @@ class WishlistController extends Controller
     {
         $user = Auth::user();
         try {
-            $product = Product::find(Magician::ed($id,false));
-            $already_listed = Wishlist::where('product_id', $product->id)->where('open_by', $user->id)->first();
-            if(isset($already_listed))
+                $userBanUntill = Carbon::parse($user->banned_until);
+                $today = Carbon::now();
+                $dayDiff = $today->diffInDays($userBanUntill);
+
+
+            if($dayDiff <= 1)
             {
-                return redirect()->back()->with('error','Product Already Added');
+                $product = Product::find(Magician::ed($id,false));
+                $already_listed = Wishlist::where('product_id', $product->id)->where('open_by', $user->id)->first();
+                if(isset($already_listed))
+                {
+                    return redirect()->back()->with('error','Product Already Added');
+                }else{
+                    Wishlist::create([
+                        'product_id' => $product->id,
+                        'open_by' => $user->id,
+                    ]);
+                    return redirect()->back()->with('success','Product Added To Wishlist');
+                }
             }else{
-                Wishlist::create([
-                    'product_id' => $product->id,
-                    'open_by' => $user->id,
-                ]);
-                return redirect()->back()->with('success','Product Added To Wishlist');
+                return redirect()->back()->with('error',"Your Account Was Banned. So You Can't Access This Field Right Now. It Will Be Remove On ".date('d M Y', strtotime($user->banned_until)));
             }
         } catch (\Throwable $th) {
             return redirect()->back();
