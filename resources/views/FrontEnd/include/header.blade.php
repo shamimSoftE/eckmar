@@ -35,10 +35,13 @@
             <li class="nav-item">
                 @switch($user->type)
                     @case(1)
-                        <a class="nav-link mx-2 menu-hover text-white py-0" aria-current="page" href="{{ url('/seller-order') }}">Order</a >
+                        <a class="nav-link mx-2 menu-hover text-white py-0" aria-current="page" href="{{ url('/seller-order') }}">Order</a>
+                    @break
+                    @case(3)
+                        <a class="nav-link mx-2 menu-hover text-white py-0" aria-current="page" href="{{ url('/orders') }}">Order</a>
                     @break
                     @default
-                        <a class="nav-link mx-2 menu-hover text-white py-0" aria-current="page" href="{{ url('/order-view') }}">Order</a >
+                        <a class="nav-link mx-2 menu-hover text-white py-0" aria-current="page" href="{{ url('/order-view') }}">Order</a>
                 @endswitch
             </li>
             <li class="nav-item">

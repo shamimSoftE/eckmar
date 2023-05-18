@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdministratorLogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\DisputesController;
@@ -150,53 +151,55 @@ Route::middleware('auth')->group(function () {
 
 
     // Dashboard======================================================= admin panel
-    // if(auth()->user()->type == 3)
-    // {
-        Route::get('admin-panel', [DashBoardController::class, 'dashboard']);
 
-        // category
-        Route::get('category', [CategoryController::class, 'index'])->name('category.index');
-        Route::post('category', [CategoryController::class, 'store'])->name('category.store');
-        Route::get('category_destroy/{id}', [CategoryController::class, 'destroy']);
+    Route::get('admin-panel', [DashBoardController::class, 'dashboard']);
 
-        // blog
-        Route::get('blog', [NewsController::class, 'index']);
-        Route::post('blog_store', [NewsController::class, 'store']);
-        Route::post('blog_edit', [NewsController::class, 'edit']);
-        Route::post('blog_update', [NewsController::class, 'update']);
-        Route::post('blog_delete/{id}', [NewsController::class, 'destroy']);
+    // category
+    Route::get('category', [CategoryController::class, 'index'])->name('category.index');
+    Route::post('category', [CategoryController::class, 'store'])->name('category.store');
+    Route::get('category_destroy/{id}', [CategoryController::class, 'destroy']);
 
-        // mirror links
-        Route::get('mirror_link', [MirrorLinkController::class, 'index']);
-        Route::post('mirror_link_store', [MirrorLinkController::class, 'store']);
-        Route::post('mirror_link_edit', [MirrorLinkController::class, 'edit']);
-        Route::post('mirror_link_update', [MirrorLinkController::class, 'update']);
-        Route::post('mirror_link_delete/{id}', [MirrorLinkController::class, 'destroy']);
+    // blog
+    Route::get('blog', [NewsController::class, 'index']);
+    Route::post('blog_store', [NewsController::class, 'store']);
+    Route::post('blog_edit', [NewsController::class, 'edit']);
+    Route::post('blog_update', [NewsController::class, 'update']);
+    Route::post('blog_delete/{id}', [NewsController::class, 'destroy']);
 
-        // user list
-        Route::get('user_list', [UserController::class, 'userList']);
-        Route::post('user_filter', [UserController::class, 'userFilter']);
-        Route::get('user_details/{id}', [UserController::class, 'userDetail']);
+    // mirror links
+    Route::get('mirror_link', [MirrorLinkController::class, 'index']);
+    Route::post('mirror_link_store', [MirrorLinkController::class, 'store']);
+    Route::post('mirror_link_edit', [MirrorLinkController::class, 'edit']);
+    Route::post('mirror_link_update', [MirrorLinkController::class, 'update']);
+    Route::post('mirror_link_delete/{id}', [MirrorLinkController::class, 'destroy']);
 
-        // user panel permission
-        Route::post('user_permission/', [UserController::class, 'userPermission'])->name('user_permission');
+    // user list
+    Route::get('user_list', [UserController::class, 'userList']);
+    Route::post('user_filter', [UserController::class, 'userFilter']);
+    Route::get('user_details/{id}', [UserController::class, 'userDetail']);
 
-        // user wallet modify
-        Route::post('user_wallet_modify/', [UserController::class, 'userWalletModify'])->name('user_wallet_modify');
+    // user panel permission
+    Route::post('user_permission/', [UserController::class, 'userPermission'])->name('user_permission');
 
-        // user banned
-        Route::post('user_banned/', [UserController::class, 'userBanned'])->name('user.banned');
+    // user wallet modify
+    Route::post('user_wallet_modify/', [UserController::class, 'userWalletModify'])->name('user_wallet_modify');
 
-        // admin product list
-        Route::get('admin_product_list', [ProductController::class, 'adminProductLlst']);
-        Route::post('admin_product_list', [ProductController::class, 'adminProductFilter'])->name('adminProFilter');
-        Route::get('admin_product_edit/{id}', [ProductController::class, 'adminProductEdit']);
-        Route::post('admin_product_update/{id}', [ProductController::class, 'adminProductUpdate']);
-        Route::post('admin_product_delete/{id}', [ProductController::class, 'adminProductDelete']);
+    // user banned
+    Route::post('user_banned/', [UserController::class, 'userBanned'])->name('user.banned');
 
-    // }else{
-    //     Route::get('/market-place', [FrontController::class, 'marketplace']);
-    // }
+    // administrator
+    Route::get('administrator_log', [AdministratorLogController::class, 'index']);
+
+    // admin product list
+    Route::get('admin_product_list', [ProductController::class, 'adminProductLlst']);
+    Route::post('admin_product_list', [ProductController::class, 'adminProductFilter'])->name('adminProFilter');
+    Route::get('admin_product_edit/{id}', [ProductController::class, 'adminProductEdit']);
+    Route::post('admin_product_update/{id}', [ProductController::class, 'adminProductUpdate']);
+    Route::post('admin_product_delete/{id}', [ProductController::class, 'adminProductDelete']);
+
+    // all order
+    Route::get('orders', [DashBoardController::class, 'adminOrder']);
+
     // profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

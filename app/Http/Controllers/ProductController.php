@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdministratorLog;
 use App\Models\Category;
 use App\Models\Magician;
 use App\Models\Product;
@@ -333,8 +334,47 @@ class ProductController extends Controller
             $input['slug'] = Str::slug($request->name);
         }
 
+       try {
+        $seller_name = $pro->seller->name;
+        $product_name = $pro->name;
+       } catch (\Throwable $th) {
+        $seller_name = '';
+        $product_name = '';
+       }
+
         $pro->update($input);
-        return redirect()->back()->with('success', 'Product Updated');
+
+         // ================ create administrator log
+         $user = Auth::user();
+         // 0=user, 1=vendor, 2=support, 3=admin
+
+         switch ($user->type) {
+             case 0:
+                 $type = 'User';
+                 break;
+             case 1:
+                 $type = 'Vendor';
+                 break;
+             case 2:
+                 $type = 'Support';
+                 break;
+             case 3:
+                 $type = 'Admin';
+                 break;
+
+             default:
+                 $type = 'Other';
+                 break;
+         }
+
+        AdministratorLog::create([
+            'user_id' => $user->id,
+            'type' => 'Update',
+            'description' => 'Product ' . '['.$product_name .']' .' updated owned by '. $seller_name.'',
+            'user' => $type,
+        ]);
+
+        return redirect('admin_product_list')->with('success', 'Product Updated');
     }
 
 
@@ -342,7 +382,49 @@ class ProductController extends Controller
     {
         $product = Product::find(Magician::ed($id,false));
         // dd($product);
+        try {
+
+            $seller_name = $product->seller->name;
+            $product_name = $product->name;
+           } catch (\Throwable $th) {
+            $seller_name = '';
+            $product_name = '';
+           }
+
         $product->delete();
+
+
+
+        // ================ create administrator log
+        $user = Auth::user();
+        // 0=user, 1=vendor, 2=support, 3=admin
+
+        switch ($user->type) {
+            case 0:
+                $type = 'User';
+                break;
+            case 1:
+                $type = 'Vendor';
+                break;
+            case 2:
+                $type = 'Support';
+                break;
+            case 3:
+                $type = 'Admin';
+                break;
+
+            default:
+                $type = 'Other';
+                break;
+        }
+
+       AdministratorLog::create([
+           'user_id' => $user->id,
+           'type' => 'Delete',
+           'description' => 'Product '. '['.$product_name .']' .' deleted owned by '. $seller_name.'',
+           'user' => $type,
+       ]);
+
         return redirect()->back()->with('success', 'Product Deleted');
     }
 

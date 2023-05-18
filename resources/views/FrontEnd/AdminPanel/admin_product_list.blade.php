@@ -34,6 +34,7 @@
                             <form method="POST" action="{{ route('adminProFilter') }}">
                                 @csrf
                                 <div class="row">
+
                                     <div class="col-4">
                                         <div class="form-group text-start mt-1">
                                             <label for="">Product Name:</label>
@@ -42,6 +43,7 @@
                                            class="form-control">
                                         </div>
                                     </div>
+
                                     <div class="col-3">
                                         <div class="form-group text-start mt-1">
                                             <label for="">Vendor Name:</label>

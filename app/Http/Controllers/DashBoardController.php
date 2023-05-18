@@ -35,11 +35,26 @@ class DashBoardController extends Controller
 
             $data['top_product'] = Product::where('deleted_at',null)->where('order_count', '!=', null)->get();
             $data['top_category'] = Category::where('deleted_at',null)->where('order_count', '!=', null)->get();
-            // dd($data['total_product'], $data);
+
 
             return view('FrontEnd.AdminPanel.dashboard',compact('data'));
         }else{
             return redirect('/dashboard');
         }
+    }
+
+
+    public function adminOrder()
+    {
+        $data['orders'] = Order::where('deleted_at', null)->latest()->paginate(5);
+        $data['order_process'] = Order::where('deleted_at', null)->where('status', 0)->latest()->paginate(5);
+        $data['order_complete'] = Order::where('deleted_at', null)->where('status', 1)->latest()->paginate(5);
+        $data['order_delivered'] = Order::where('deleted_at', null)->where('status', 2)->latest()->paginate(5);
+        $data['order_disputes'] = Order::where('deleted_at', null)->where('status', 3)->latest()->paginate(5);
+        $data['order_cancell'] = Order::where('deleted_at', null)->where('status', 4)->latest()->paginate(5);
+
+        // dd(count($data['orders']),count( $data['order_process']), count($data['order_complete']), count($data['order_delivered']), count($data['order_disputes']), count( $data['order_cancell']));
+
+        return view('FrontEnd.AdminPanel.seller_all_order',compact('data'));
     }
 }

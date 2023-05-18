@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdministratorLog;
 use App\Models\BanUser;
 use App\Models\Magician;
 use App\Models\OrderFeedback;
@@ -122,17 +123,36 @@ class UserController extends Controller
             $type = $user->type;
         }
 
+
+        // ================ administrator log
+        $user_o = Auth::user();
+        // 0=user, 1=vendor, 2=support, 3=admin
+
+        switch ($user->type) {
+            case 0:
+                $user_type = "User";
+                break;
+
+            default:
+                $user_type = "Support";
+                break;
+        }
+
+
         if ($request->user_type_vendor == 1 &&  $type == 2) {
             $user->update([
-                'type' => 1,
+                'type' => $type,
                 'vendor_since' => date('Y-m-d H:m:s'),
                 'support_panel' => 1
             ]);
+
+            AdministratorLog::create(['user_id' => $user_o->id,'type' => 'Change', 'description' => 'Vendor Permission Given From '.$user_type.'', 'user' => $user->name ]);
         }else {
             $user->update([
-                'type' => 1,
+                'type' => $type,
                 'support_panel' => 0,
             ]);
+            AdministratorLog::create(['user_id' => $user_o->id,'type' => 'Update', 'description' => 'Permission Updated '.$user_type.'', 'user' => $user->name ]);
         }
 
         return redirect()->back()->with("success", 'User panel permission saved');
@@ -152,6 +172,13 @@ class UserController extends Controller
             $user_wallet = Wallet::where('user_id', $user->id)->first();
             $user_wallet->update(['balance' => $request->balance_dollar]);
         }
+
+         // ================ administrator log
+         $user_o = Auth::user();
+         // 0=user, 1=vendor, 2=support, 3=admin
+
+        AdministratorLog::create(['user_id' => $user_o->id, 'type' => 'Update', 'description' => 'User Wallet Updated', 'user' => $user->name ]);
+
         return redirect()->back()->with("success", 'User wallet updated');
     }
 
@@ -163,6 +190,12 @@ class UserController extends Controller
             'end_date' => now()->addDays($request->ban_for),
         ]);
         $user->update(['banned_until' => now()->addDays($request->ban_for)]);
+
+         // ================ administrator log
+         $user_o = Auth::user();
+         // 0=user, 1=vendor, 2=support, 3=admin
+        AdministratorLog::create(['user_id' => $user_o->id, 'type' => 'Banned', 'description' => 'Account Banned For ' . $request->ban_for.'', 'user' => $user->name ]);
+
         return redirect()->back()->with("success", 'User banned for ' .$request->ban_for.' days.');
     }
 }

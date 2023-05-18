@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdministratorLog;
 use App\Models\Category;
 use App\Models\Magician;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class CategoryController extends Controller
         if(Auth::user()->type == 3)
         {
             $categoryC = Category::where('deleted_at', null)->get();
-            $category = Category::where('deleted_at', null)->where('parent_id', null)->get();
+            $category = Category::where('deleted_at', null)->where('parent_id', null)->latest()->get();
             return view('FrontEnd.AdminPanel.categories',compact('category','categoryC'));
         }else{
             return redirect('/dashboard');
@@ -61,6 +62,37 @@ class CategoryController extends Controller
            $input['parent_id'] = $request->parent_id;
         } else { unset($input['parent_id']); }
         Category::create($input);
+
+        // ================ create administrator log
+        $user = Auth::user();
+        // 0=user, 1=vendor, 2=support, 3=admin
+
+        switch ($user->type) {
+            case 0:
+                $type = 'User';
+                break;
+            case 1:
+                $type = 'Vendor';
+                break;
+            case 2:
+                $type = 'Support';
+                break;
+            case 3:
+                $type = 'Admin';
+                break;
+
+            default:
+                $type = 'Other';
+                break;
+        }
+
+        AdministratorLog::create([
+            'user_id' => $user->id,
+            'type' => 'Create',
+            'description' => 'Category Created',
+            'user' => $type,
+        ]);
+
         return redirect()->back()->with('success','Category Created');
     }
 
@@ -116,6 +148,38 @@ class CategoryController extends Controller
             $cate->delete();
             $item->delete();
         }
+
+        // ================ administrator log
+        $user = Auth::user();
+        // 0=user, 1=vendor, 2=support, 3=admin
+
+        switch ($user->type) {
+            case 0:
+                $type = 'User';
+                break;
+            case 1:
+                $type = 'Vendor';
+                break;
+            case 2:
+                $type = 'Support';
+                break;
+            case 3:
+                $type = 'Admin';
+                break;
+
+            default:
+                $type = 'Other';
+                break;
+        }
+
+        AdministratorLog::create([
+            'user_id' => $user->id,
+            'type' => 'Remove',
+            'description' => 'Category Deleted',
+            'user' => $type,
+        ]);
+
+
         return redirect()->back()->with('success','Category Deleted');
     }
 }

@@ -4,7 +4,6 @@
 
 @push('style')
     <style>
-
         .dropdown-toggle::after {
             display: none !important;
         }

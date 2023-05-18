@@ -49,7 +49,7 @@
   <body>
     <div class="container-fluid text-center p-0 m-0">
       <!-- Header Start -->
-     @include('FrontEnd.include.header')
+        @include('FrontEnd.include.header')
       <!-- Header End -->
 
       <!-- Main Start -->
